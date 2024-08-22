@@ -1,0 +1,374 @@
+Microsoft Windows [Version 10.0.19045.4780]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\User>sqlplus
+
+SQL*Plus: Release 11.2.0.2.0 Production on Tue Aug 20 10:22:11 2024
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Enter user-name: system
+Enter password:
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> create table author(author_id int primary key,name varchar(20),country varchar(20));
+
+Table created.
+
+SQL> insert into author values(1,'J.D.Salinger','USA');
+
+1 row created.
+
+SQL> insert into author values(2,'Harper Lee','USA');
+
+1 row created.
+
+SQL> insert into author values(3,'George Orwell','UK');
+
+1 row created.
+
+SQL> insert into author values(4,'Jane Austen','UK');
+
+1 row created.
+
+SQL> insert into author values(5,'F.Scott Fitzgerald','USA');
+
+1 row created.
+
+SQL> create table book(book_id int primary key,author_id int references author(author_id),publication_year int);
+
+Table created.
+
+SQL> insert into book values(1,'The Catcher in the Rye',1,1951);
+insert into book values(1,'The Catcher in the Rye',1,1951)
+            *
+ERROR at line 1:
+ORA-00913: too many values
+
+
+SQL> alter table book add title varchar(50) first author_id;
+alter table book add title varchar(50) first author_id
+                                       *
+ERROR at line 1:
+ORA-01735: invalid ALTER TABLE option
+
+
+SQL> alter table book add title varchar(50) after book_id;
+alter table book add title varchar(50) after book_id
+                                       *
+ERROR at line 1:
+ORA-01735: invalid ALTER TABLE option
+
+
+SQL> drop table book;
+
+Table dropped.
+
+SQL> create table book(book_id int primary key,title varchar(50),author_id int references author(author_id),publication_year int);
+
+Table created.
+
+SQL> insert into book values(1,'The Catcher in the Rye',1,1951);
+
+1 row created.
+
+SQL> insert into book values(2,'To Kill a Mockingbird',1,1960);
+
+1 row created.
+
+SQL> update book set author_id =2 where book_id=2;
+
+1 row updated.
+
+SQL> select * from book;
+
+   BOOK_ID TITLE                                               AUTHOR_ID
+---------- -------------------------------------------------- ----------
+PUBLICATION_YEAR
+----------------
+         1 The Catcher in the Rye                                      1
+            1951
+
+         2 To Kill a Mockingbird                                       2
+            1960
+
+
+SQL> insert into book values(3,'1984',3,1949);
+
+1 row created.
+
+SQL> insert into book values(4,'Pride and Prejudice',4,1813);
+
+1 row created.
+
+SQL> insert into book values(5,'The Great Gatsby',5,1925);
+
+1 row created.
+
+SQL> create table member(member_id int primary key,name varchar(20),joinDate date);
+
+Table created.
+
+SQL> insert into member values(1,'Alice Johnson',TO_DATE('2022-01-10','YYYY-MM-DD'));
+
+1 row created.
+
+SQL> insert into member values(2,'Bob Smith',TO_DATE('2022-02-15','YYYY-MM-DD'));
+
+1 row created.
+
+SQL> insert into member values(3,'Diana Prince',TO_DATE('2022-03-20','YYYY-MM-DD'));
+
+1 row created.
+
+SQL> update member set name='Charlie Davis' where member_id=3;
+
+1 row updated.
+
+SQL> select * from member;
+
+ MEMBER_ID NAME                 JOINDATE
+---------- -------------------- ---------
+         1 Alice Johnson        10-JAN-22
+         2 Bob Smith            15-FEB-22
+         3 Charlie Davis        20-MAR-22
+
+SQL> insert into member values(4,'Diana Prince',TO_DATE('2022-04-25','YYYY-MM-DD'));
+
+1 row created.
+
+SQL> insert into member values(5,'Edward Norton',TO_DATE('2022-05-30','YYYY-MM-DD'));
+
+1 row created.
+
+SQL> create table borrowRecords(record_id int primary key,member_id int references member(member_id),book_id int references book(book_id),borrowDate date,returnDate date);
+
+Table created.
+
+SQL> insert into borrowRecords values(1,1,2,TO_DATE('2023-07-01','YYYY-MM-DD'),TO_DATE('2023-07-15','YYYY-MM-DD'));
+
+1 row created.
+
+SQL> insert into borrowRecords values(2,2,3,TO_DATE('2023-07-05','YYYY-MM-DD'),TO_DATE('2023-07-20','YYYY-MM-DD'));
+
+1 row created.
+
+SQL> insert into borrowRecords values(3,3,1,TO_DATE('2023-07-10','YYYY-MM-DD'),TO_DATE('2023-07-25','YYYY-MM-DD'));
+
+1 row created.
+
+SQL> insert into borrowRecords values(4,4,5,TO_DATE('2023-07-12','YYYY-MM-DD'),TO_DATE('2023-07-28','YYYY-MM-DD'));
+
+1 row created.
+
+SQL> insert into borrowRecords values(5,5,4,TO_DATE('2023-07-15','YYYY-MM-DD'),NULL);
+
+1 row created.
+
+SQL> select * from author;
+
+ AUTHOR_ID NAME                 COUNTRY
+---------- -------------------- --------------------
+         1 J.D.Salinger         USA
+         2 Harper Lee           USA
+         3 George Orwell        UK
+         4 Jane Austen          UK
+         5 F.Scott Fitzgerald   USA
+
+SQL> select * from book;
+
+   BOOK_ID TITLE                                               AUTHOR_ID
+---------- -------------------------------------------------- ----------
+PUBLICATION_YEAR
+----------------
+         1 The Catcher in the Rye                                      1
+            1951
+
+         2 To Kill a Mockingbird                                       2
+            1960
+
+         3 1984                                                        3
+            1949
+
+
+   BOOK_ID TITLE                                               AUTHOR_ID
+---------- -------------------------------------------------- ----------
+PUBLICATION_YEAR
+----------------
+         4 Pride and Prejudice                                         4
+            1813
+
+         5 The Great Gatsby                                            5
+            1925
+
+
+SQL> select * from member;
+
+ MEMBER_ID NAME                 JOINDATE
+---------- -------------------- ---------
+         1 Alice Johnson        10-JAN-22
+         2 Bob Smith            15-FEB-22
+         3 Charlie Davis        20-MAR-22
+         4 Diana Prince         25-APR-22
+         5 Edward Norton        30-MAY-22
+
+SQL> select * from borrowRecords;
+
+ RECORD_ID  MEMBER_ID    BOOK_ID BORROWDAT RETURNDAT
+---------- ---------- ---------- --------- ---------
+         1          1          2 01-JUL-23 15-JUL-23
+         2          2          3 05-JUL-23 20-JUL-23
+         3          3          1 10-JUL-23 25-JUL-23
+         4          4          5 12-JUL-23 28-JUL-23
+         5          5          4 15-JUL-23
+
+SQL> select name from author where author_id=(select author_id from book wherepublication_year=1950);
+select name from author where author_id=(select author_id from book wherepublication_year=1950)
+                                                                                         *
+ERROR at line 1:
+ORA-00907: missing right parenthesis
+
+
+SQL> select name from author where author_id=(select author_id from book where publication_year=1950);
+
+no rows selected
+
+SQL> select name from author,book where author.author_id=book.author_id and publication_year=1950);
+select name from author,book where author.author_id=book.author_id and publication_year=1950)
+                                                                                            *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> select name from author,book where author.author_id=book.author_id and publication_year=1950;
+
+no rows selected
+
+SQL> select name from author,book where author.author_id=book.author_id and book.publication_year=1950;
+
+no rows selected
+
+SQL> select name from author,book where author_id in(select author_id from author,book) where author.author_id=book.author_id and book.publication_year=1950);
+select name from author,book where author_id in(select author_id from author,book) where author.author_id=book.author_id and book.publication_year=1950)
+                                                                                   *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> select name from author,book where author_id in(select author_id from author,book where author.author_id=book.author_id and book.publication_year=1950);
+select name from author,book where author_id in(select author_id from author,book where author.author_id=book.author_id and book.publication_year=1950)
+                                   *
+ERROR at line 1:
+ORA-00918: column ambiguously defined
+
+
+SQL> select name from author,book where author_id in(select author_id from author,book where author.author_id=book.author_id and book.publication_year>1950);
+select name from author,book where author_id in(select author_id from author,book where author.author_id=book.author_id and book.publication_year>1950)
+                                   *
+ERROR at line 1:
+ORA-00918: column ambiguously defined
+
+
+SQL> select name from author,book where author.author_id=book.author_id and publication_year>1950);
+select name from author,book where author.author_id=book.author_id and publication_year>1950)
+                                                                                            *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> select name from author,book where author.author_id=book.author_id and publication_year>1950;
+
+NAME
+--------------------
+J.D.Salinger
+Harper Lee
+
+SQL> select title from book where book_id in(select book_id from book,member,borrowRecords where member.member_id =borrowRecords.member_id and book.book_id =borrowRecords.book_id and joinDate>'2022-03-01');
+select title from book where book_id in(select book_id from book,member,borrowRecords where member.member_id =borrowRecords.member_id and book.book_id =borrowRecords.book_id and joinDate>'2022-03-01')
+                                               *
+ERROR at line 1:
+ORA-00918: column ambiguously defined
+
+
+SQL> update borrowRecords set returnDate=TO_DATE('2023-08-01','YYYY-MM-DD') where record_id=5;
+
+1 row updated.
+
+SQL> selct * from borrowRecords;
+SP2-0734: unknown command beginning "selct * fr..." - rest of line ignored.
+SQL> select * from borrowRecords;
+
+ RECORD_ID  MEMBER_ID    BOOK_ID BORROWDAT RETURNDAT
+---------- ---------- ---------- --------- ---------
+         1          1          2 01-JUL-23 15-JUL-23
+         2          2          3 05-JUL-23 20-JUL-23
+         3          3          1 10-JUL-23 25-JUL-23
+         4          4          5 12-JUL-23 28-JUL-23
+         5          5          4 15-JUL-23 01-AUG-23
+
+SQL> update author set country='England' where name='George Orwell';
+
+1 row updated.
+
+SQL> delete from borrowRecords where returnDate=NULL;
+
+0 rows deleted.
+
+SQL> delete from book where title='The Catcher in the Rye';
+delete from book where title='The Catcher in the Rye'
+*
+ERROR at line 1:
+ORA-02292: integrity constraint (SYSTEM.SYS_C007014) violated - child record
+found
+
+
+SQL> select * from borrowRecords;
+
+ RECORD_ID  MEMBER_ID    BOOK_ID BORROWDAT RETURNDAT
+---------- ---------- ---------- --------- ---------
+         1          1          2 01-JUL-23 15-JUL-23
+         2          2          3 05-JUL-23 20-JUL-23
+         3          3          1 10-JUL-23 25-JUL-23
+         4          4          5 12-JUL-23 28-JUL-23
+         5          5          4 15-JUL-23 01-AUG-23
+
+SQL> select * from
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

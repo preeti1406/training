@@ -1,0 +1,354 @@
+Microsoft Windows [Version 10.0.19045.4780]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\User>sqlplus
+
+SQL*Plus: Release 11.2.0.2.0 Production on Tue Aug 20 17:32:24 2024
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Enter user-name: system
+Enter password:
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> create table department(department_id number primary key,department_name varchar(50) unique not null,location varchar(50));
+create table department(department_id number primary key,department_name varchar(50) unique not null,location varchar(50))
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> create table department1(department_id number primary key,department_name varchar(50) unique not null,location varchar(50));
+
+Table created.
+
+SQL> create table employee1(employee_id number primary key,first_name varchar(50) not null,last_name varchar(50)not null,department_id number references department1(department_id),hire_date date,salary number);
+
+Table created.
+
+SQL> insert into department values(1,'Human Resources','New York');
+insert into department values(1,'Human Resources','New York')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C006997) violated
+
+
+SQL> insert into department1 values(1,'Human Resources','New York');
+
+1 row created.
+
+SQL> insert into department1 values(2,'Engineering','San Francisco');
+
+1 row created.
+
+SQL> insert into department1 values(3,'Marketing','Chicago');
+
+1 row created.
+
+SQL> insert into department1 values(4,'Sales','Miami');
+
+1 row created.
+
+SQL> select * from department1;
+
+DEPARTMENT_ID DEPARTMENT_NAME
+------------- --------------------------------------------------
+LOCATION
+--------------------------------------------------
+            1 Human Resources
+New York
+
+            2 Engineering
+San Francisco
+
+            3 Marketing
+Chicago
+
+
+DEPARTMENT_ID DEPARTMENT_NAME
+------------- --------------------------------------------------
+LOCATION
+--------------------------------------------------
+            4 Sales
+Miami
+
+
+SQL> insert into employee1 values(1,'John','Doe',2,TO_DATE('01-JAN-20','DD-MMM-YY'),85000);
+insert into employee1 values(1,'John','Doe',2,TO_DATE('01-JAN-20','DD-MMM-YY'),85000)
+                                                                  *
+ERROR at line 1:
+ORA-01821: date format not recognized
+
+
+SQL> insert into employee1 values(1,'John','Doe',2,TO_DATE('01-01-20','DD-MM-YY'),85000);
+
+1 row created.
+
+SQL> insert into employee1 values(2,'Jane','Smith',1,TO_DATE('22-03-19','DD-MM-YY'),60000);
+
+1 row created.
+
+SQL> insert into employee1 values(3,'Michael','Brown',3,TO_DATE('11-07-18','DD-MM-YY'),75000);
+
+1 row created.
+
+SQL> insert into employee1 values(4,'Emily','Davis',4,TO_DATE('30-09-21','DD-MM-YY'),72000);
+
+1 row created.
+
+SQL> insert into employee1 values(5,'David','Wilson',2,TO_DATE('05-11-20','DD-MM-YY'),90000);
+
+1 row created.
+
+SQL> select * from employee1;
+
+EMPLOYEE_ID FIRST_NAME
+----------- --------------------------------------------------
+LAST_NAME                                          DEPARTMENT_ID HIRE_DATE
+-------------------------------------------------- ------------- ---------
+    SALARY
+----------
+          1 John
+Doe                                                            2 01-JAN-20
+     85000
+
+          2 Jane
+Smith                                                          1 22-MAR-19
+     60000
+
+EMPLOYEE_ID FIRST_NAME
+----------- --------------------------------------------------
+LAST_NAME                                          DEPARTMENT_ID HIRE_DATE
+-------------------------------------------------- ------------- ---------
+    SALARY
+----------
+
+          3 Michael
+Brown                                                          3 11-JUL-18
+     75000
+
+          4 Emily
+Davis                                                          4 30-SEP-21
+
+EMPLOYEE_ID FIRST_NAME
+----------- --------------------------------------------------
+LAST_NAME                                          DEPARTMENT_ID HIRE_DATE
+-------------------------------------------------- ------------- ---------
+    SALARY
+----------
+     72000
+
+          5 David
+Wilson                                                         2 05-NOV-20
+     90000
+
+
+SQL> select first_name||''||last_name from employee1,department1 where department1.department_id=employee1,department_id and department1.department_name='Engineering';
+select first_name||''||last_name from employee1,department1 where department1.department_id=employee1,department_id and department1.department_name='Engineering'
+                                                                                                     *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> select first_name,last_name from employee1,department1 where department1.department_id=employee1,department_id and department1.department_name='Engineering';
+select first_name,last_name from employee1,department1 where department1.department_id=employee1,department_id and department1.department_name='Engineering'
+                                                                                                *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> select first_name,last_name from employee1,department1 where department1.department_id=employee1,department_id and department_name='Engineering';
+select first_name,last_name from employee1,department1 where department1.department_id=employee1,department_id and department_name='Engineering'
+                                                                                                *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> select first_name,last_name from employee1,department1 where department1.department_id=employee1.department_id and department_name='Engineering';
+
+FIRST_NAME
+--------------------------------------------------
+LAST_NAME
+--------------------------------------------------
+John
+Doe
+
+David
+Wilson
+
+
+SQL> select first_name||' '||last_name from employee1,department1 where department1.department_id=employee1.department_id and department_name='Engineering';
+
+FIRST_NAME||''||LAST_NAME
+--------------------------------------------------------------------------------
+John Doe
+David Wilson
+
+SQL> select department_name,count(select employee_id from employee1,department1 where employee1.department_id=department1.department_id) from department1;
+select department_name,count(select employee_id from employee1,department1 where employee1.department_id=department1.department_id) from department1
+                             *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> select department_name,count(select employee_id from employee1,department1 where employee1.department_id=department1.department_id) from department1;
+select department_name,count(select employee_id from employee1,department1 where employee1.department_id=department1.department_id) from department1
+                             *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> select sum(salary) from employee1,department1 where department1.department_name='Marketing';
+
+SUM(SALARY)
+-----------
+     382000
+
+SQL> select sum(salary) from employee1,department1 where department1.department_id=employee1.department_id and department1.department_name='Marketing';
+
+SUM(SALARY)
+-----------
+      75000
+
+SQL> select sum(salary) from employee1,department1 where department1.department_name='Marketing';
+
+SUM(SALARY)
+-----------
+     382000
+
+SQL> select sum(salary) from employee1,department1 where department1.department_id=employee1.department_id and department1.department_name='Marketing';
+
+SUM(SALARY)
+-----------
+      75000
+
+SQL> select employee_id from employee1,department1 where employee1.department_id=department.department_id and department_name='Human Resources';
+select employee_id from employee1,department1 where employee1.department_id=department.department_id and department_name='Human Resources'
+                                                                            *
+ERROR at line 1:
+ORA-00904: "DEPARTMENT"."DEPARTMENT_ID": invalid identifier
+
+
+SQL> select employee_id from employee1,department1 where employee1.department_id=department1.department_id and department_name='Human Resources';
+
+EMPLOYEE_ID
+-----------
+          2
+
+SQL> select department_name as d,count(select employee_id from employee1,department1 where employee1.department_id=department1.department_id and department_name=d ) from department1,employee1;
+select department_name as d,count(select employee_id from employee1,department1 where employee1.department_id=department1.department_id and department_name=d ) from department1,employee1
+                                  *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> update employee1 set salary=88000 where employee_id=1;
+
+1 row updated.
+
+SQL> update employee1 set department_id=(select department_id from department1 where department_name='Human Resources') where employee_id=5;
+
+1 row updated.
+
+SQL> select * from employee1;
+
+EMPLOYEE_ID FIRST_NAME
+----------- --------------------------------------------------
+LAST_NAME                                          DEPARTMENT_ID HIRE_DATE
+-------------------------------------------------- ------------- ---------
+    SALARY
+----------
+          1 John
+Doe                                                            2 01-JAN-20
+     88000
+
+          2 Jane
+Smith                                                          1 22-MAR-19
+     60000
+
+EMPLOYEE_ID FIRST_NAME
+----------- --------------------------------------------------
+LAST_NAME                                          DEPARTMENT_ID HIRE_DATE
+-------------------------------------------------- ------------- ---------
+    SALARY
+----------
+
+          3 Michael
+Brown                                                          3 11-JUL-18
+     75000
+
+          4 Emily
+Davis                                                          4 30-SEP-21
+
+EMPLOYEE_ID FIRST_NAME
+----------- --------------------------------------------------
+LAST_NAME                                          DEPARTMENT_ID HIRE_DATE
+-------------------------------------------------- ------------- ---------
+    SALARY
+----------
+     72000
+
+          5 David
+Wilson                                                         1 05-NOV-20
+     90000
+
+
+SQL> delete from employee1 where employee_id=5;
+
+1 row deleted.
+
+SQL> delete from employee1 where department_id=(select department_id from department1 where department_name='Human Resources');
+
+1 row deleted.
+
+SQL> delete from department1 where department_name='Human Resources';
+
+1 row deleted.
+
+SQL> select * from department1;
+
+DEPARTMENT_ID DEPARTMENT_NAME
+------------- --------------------------------------------------
+LOCATION
+--------------------------------------------------
+            2 Engineering
+San Francisco
+
+            3 Marketing
+Chicago
+
+            4 Sales
+Miami
+
+
+SQL> select * from employee1;
+
+EMPLOYEE_ID FIRST_NAME
+----------- --------------------------------------------------
+LAST_NAME                                          DEPARTMENT_ID HIRE_DATE
+-------------------------------------------------- ------------- ---------
+    SALARY
+----------
+          1 John
+Doe                                                            2 01-JAN-20
+     88000
+
+          3 Michael
+Brown                                                          3 11-JUL-18
+     75000
+
+EMPLOYEE_ID FIRST_NAME
+----------- --------------------------------------------------
+LAST_NAME                                          DEPARTMENT_ID HIRE_DATE
+-------------------------------------------------- ------------- ---------
+    SALARY
+----------
+
+          4 Emily
+Davis                                                          4 30-SEP-21
+     72000
+
+
+SQL>

@@ -1,0 +1,45 @@
+
+
+Procedure
+CREATE OR REPLACE PROCEDURE DISP(NO NUMBER)
+AS
+BEGIN
+FOR I IN 1..NO LOOP
+DBMS_OUTPUT.PUT_LINE('WELCOME');
+END LOOP;
+END;
+/
+
+->@DISP;
+-> execute DISP(4);
+
+Trigger
+create or replace trigger test_trigger
+after insert on test3
+Begin
+dbms_output.put_line('Trigger Fired');
+End;
+/
+-> ed test_trigger
+->@test_trigger
+SQL> insert into test3 values(1);
+Trigger Fired
+
+1 row created.
+
+
+cursor 
+declare
+cursor c is select * from employees;
+begin
+for c1 in c
+loop
+dbms_output.put_line(c1.employee_id||''||c1.first_name);
+end loop;
+end;
+/
+
+-> @cursor1
+
+
+
